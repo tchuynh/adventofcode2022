@@ -1,0 +1,70 @@
+"""
+It appears that you are describing a problem where you need to simulate the flow of sand in a cave system. To solve this problem, you will need to simulate the movement of each unit of sand until it comes to rest.
+
+One way to do this is to use a two-dimensional array to represent the cave system, where each element of the array represents a tile in the cave. You can then iterate over the array, starting from the source of the sand (the point at the top of the cave), and simulate the movement of each unit of sand.
+
+At each step, you will need to check the tile below the current unit of sand. If the tile is empty, you can move the sand down one tile. If the tile is blocked, you will need to check the tiles to the left and right of the current tile. If either of those tiles are empty, you can move the sand in that direction. If all three tiles are blocked, the unit of sand has come to rest.
+
+You can continue this process until all of the sand has come to rest, at which point you can count the number of units of sand that have come to rest in the cave system.
+"""
+
+
+# Open the file and read its contents
+with open("/Users/tchuynh/adventofcode2022/cave.txt", "r") as file:
+    cave_lines = file.readlines()
+
+# Create the 2d list by splitting each line of the file by the "->" delimiter
+# and then converting each coordinate to a tuple of (x, y) values
+cave = [list(map(int, line.strip().split("->"))) for line in cave_lines]
+
+
+# define the dimensions of the cave system
+WIDTH = 10
+HEIGHT = 10
+
+# create a two-dimensional array to represent the cave system
+cave = [['.' for x in range(WIDTH)] for y in range(HEIGHT)]
+
+# add the source of the sand to the cave system
+cave[0][5] = '+'
+
+# add the rock structures to the cave system
+cave[4][4] = '#'
+cave[4][5] = '#'
+cave[6][2] = '#'
+cave[9][0] = '#'
+cave[9][1] = '#'
+cave[9][4] = '#'
+cave[9][5] = '#'
+
+# simulate the flow of sand through the cave system
+current_y = 0
+current_x = 5
+
+while current_y < HEIGHT - 1:
+  # check if the tile below the current unit of sand is empty
+  if cave[current_y + 1][current_x] == '.':
+    # move the sand down one tile
+    cave[current_y][current_x] = '.'
+    cave[current_y + 1][current_x] = 'o'
+    current_y += 1
+  else:
+    # check if the tile to the left of the current unit of sand is empty
+    if current_x > 0 and cave[current_y + 1][current_x - 1] == '.':
+      # move the sand to the left
+      cave[current_y][current_x] = '.'
+      cave[current_y + 1][current_x - 1] = 'o'
+      current_x -= 1
+    elif current_x < WIDTH - 1 and cave[current_y + 1][current_x + 1] == '.':
+      # move the sand to the right
+      cave[current_y][current_x] = '.'
+      cave[current_y + 1][current_x + 1] = 'o'
+      current_x += 1
+    else:
+      # the unit of sand has come to rest
+      break
+
+# count the number of units of sand that have come to rest in the cave system
+num_units = sum(row.count('o') for row in cave)
+
+print(num_units)
